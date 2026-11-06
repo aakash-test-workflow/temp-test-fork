@@ -1,0 +1,20 @@
+name: tailnet-probe
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: tenki-standard-small-2c-4g
+    steps:
+      - name: Report tailnet reachability
+        run: |
+          set -u
+          echo "event=${{ github.event_name }} repo=${{ github.repository }} head_repo=${{ github.event.pull_request.head.repo.full_name || github.repository }}"
+          echo "runner=${RUNNER_NAME:-unknown}"
+          ip -o -4 addr show || true
+          ip -4 route show || true
+          ls -la /run/tenki-tailnet-job-approved 2>&1 || true
+          if timeout 3 bash -c 'echo > /dev/tcp/100.100.100.100/53' 2>/dev/null; then echo "QUAD100_TCP=reachable"; else echo "QUAD100_TCP=unreachable"; fi
+          if ping -c1 -W2 100.100.100.100 >/dev/null 2>&1; then echo "QUAD100_PING=reachable"; else echo "QUAD100_PING=unreachable"; fi

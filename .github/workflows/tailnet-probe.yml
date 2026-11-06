@@ -18,3 +18,6 @@ jobs:
           ls -la /run/tenki-tailnet-job-approved 2>&1 || true
           if timeout 3 bash -c 'echo > /dev/tcp/100.100.100.100/53' 2>/dev/null; then echo "QUAD100_TCP=reachable"; else echo "QUAD100_TCP=unreachable"; fi
           if ping -c1 -W2 100.100.100.100 >/dev/null 2>&1; then echo "QUAD100_PING=reachable"; else echo "QUAD100_PING=unreachable"; fi
+          echo "QUAD100_DNS_HOSTNAME=$(dig +short +time=2 +tries=1 @100.100.100.100 sandbox-2955146.tail8aab0.ts.net 2>&1 | head -1)"
+          if timeout 3 bash -c 'echo > /dev/tcp/100.114.39.104/22' 2>/dev/null; then echo "HOST_TS_SSH=reachable"; else echo "HOST_TS_SSH=unreachable"; fi
+          cat /etc/resolv.conf | grep -v '^#' || true

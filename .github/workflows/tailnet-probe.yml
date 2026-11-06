@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   probe:
-    runs-on: tenki-standard-small-2c-4g
+    runs-on: tenki-staging-standard-small-2c-4g
     steps:
       - name: Report tailnet reachability
         run: |
